@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Viool Lessen</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Viool">
+<meta name="theme-color" content="#3A2A1E">
+<link rel="apple-touch-icon" href="icon.png">
+
+<style>
+  :root{
+    --bg: #EFE6D6;
+    --ink: #33261C;
+    --ink-soft: #6B5C4C;
+    --card: #FBF7EE;
+    --shadow: rgba(58,42,30,0.18);
+
+    --l1: #C08636; /* Lesson 1 — amber */
+    --l2: #7A3B3B; /* Lesson 2 — wine */
+    --l3: #5C6E4A; /* Lesson 3 — olive */
+    --l4: #3E6B6B; /* Lesson 4 — teal */
+    --l5: #6B4C6B; /* Lesson 5 — plum */
+  }
+
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  html, body {
+    height: 100%;
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    overscroll-behavior: none;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    min-height: 100dvh;
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  }
+
+  h1, h2, .headline {
+    font-family: Georgia, "Iowan Old Style", "Palatino Linotype", serif;
+    font-weight: 600;
+    margin: 0;
+  }
+
+  .screen {
+    display: none;
+    flex: 1;
+    flex-direction: column;
+    min-height: 0;
+  }
+  .screen.active { display: flex; }
+
+  /* ---------- Lesson picker ---------- */
+  #screen-lessons {
+    padding: 28px 20px 20px;
+    align-items: stretch;
+  }
+
+  .app-header {
+    text-align: center;
+    margin-bottom: 22px;
+    flex-shrink: 0;
+  }
+  .app-header h1 {
+    font-size: 30px;
+    color: var(--ink);
+    letter-spacing: 0.2px;
+  }
+  .app-header p {
+    margin: 6px 0 0;
+    color: var(--ink-soft);
+    font-size: 15px;
+  }
+
+  .lesson-grid {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    align-content: center;
+    max-width: 720px;
+    margin: 0 auto;
+    width: 100%;
+  }
+  @media (min-width: 700px) {
+    .lesson-grid { grid-template-columns: repeat(5, 1fr); }
+  }
+
+  .lesson-card {
+    border: none;
+    border-radius: 26px;
+    padding: 26px 14px;
+    min-height: 150px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: #fff;
+    box-shadow: 0 8px 18px var(--shadow);
+    transition: transform 0.12s ease;
+  }
+  .lesson-card:active { transform: scale(0.96); }
+
+  .lesson-card .num {
+    font-family: Georgia, "Iowan Old Style", serif;
+    font-size: 52px;
+    font-weight: 700;
+    line-height: 1;
+  }
+  .lesson-card .label {
+    font-size: 15px;
+    opacity: 0.92;
+  }
+
+  .lesson-card.l1 { background: var(--l1); }
+  .lesson-card.l2 { background: var(--l2); }
+  .lesson-card.l3 { background: var(--l3); }
+  .lesson-card.l4 { background: var(--l4); }
+  .lesson-card.l5 { background: var(--l5); }
+
+  /* ---------- Video picker ---------- */
+  #screen-videos {
+    padding: 0;
+  }
+
+  .subheader {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 18px;
+    flex-shrink: 0;
+    color: #fff;
+  }
+
+  .back-btn {
+    border: none;
+    background: rgba(255,255,255,0.22);
+    color: #fff;
+    font-size: 17px;
+    padding: 10px 16px;
+    border-radius: 14px;
+    font-family: inherit;
+  }
+  .back-btn:active { background: rgba(255,255,255,0.35); }
+
+  .subheader h2 {
+    font-size: 22px;
+    flex: 1;
+  }
+
+  .video-scroll {
+    flex: 1;
+    overflow-y: auto;
+    padding: 18px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .video-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    max-width: 640px;
+    margin: 0 auto;
+  }
+  @media (min-width: 700px) {
+    .video-grid { grid-template-columns: repeat(5, 1fr); }
+  }
+
+  .video-btn {
+    border: none;
+    border-radius: 20px;
+    background: var(--card);
+    color: var(--ink);
+    aspect-ratio: 1 / 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: Georgia, "Iowan Old Style", serif;
+    font-size: 30px;
+    font-weight: 700;
+    box-shadow: 0 4px 10px var(--shadow);
+  }
+  .video-btn:active { transform: scale(0.94); }
+
+  /* ---------- Player ---------- */
+  #screen-player {
+    background: #000;
+    justify-content: center;
+    position: relative;
+  }
+  #screen-player video {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    background: #000;
+  }
+  .player-back {
+    position: absolute;
+    top: calc(env(safe-area-inset-top) + 14px);
+    left: 14px;
+    z-index: 5;
+    border: none;
+    background: rgba(0,0,0,0.55);
+    color: #fff;
+    font-size: 17px;
+    padding: 10px 16px;
+    border-radius: 14px;
+    font-family: inherit;
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ SCREEN 1: choose a lesson ============ -->
+<section id="screen-lessons" class="screen active">
+  <div class="app-header">
+    <h1>Viool Lessen</h1>
+    <p>Kies een les om te beginnen</p>
+  </div>
+  <div class="lesson-grid" id="lessonGrid"></div>
+</section>
+
+<!-- ============ SCREEN 2: choose a video ============ -->
+<section id="screen-videos" class="screen">
+  <div class="subheader" id="videoHeader">
+    <button class="back-btn" onclick="showLessons()">‹ Lessen</button>
+    <h2 id="videoHeaderTitle">Les</h2>
+  </div>
+  <div class="video-scroll">
+    <div class="video-grid" id="videoGrid"></div>
+  </div>
+</section>
+
+<!-- ============ SCREEN 3: play a video ============ -->
+<section id="screen-player" class="screen">
+  <button class="player-back" onclick="stopAndShowVideos()">‹ Terug</button>
+  <video id="player" playsinline controls></video>
+</section>
+
+<script>
+  /* =====================================================================
+     LES-INSTELLINGEN (LESSON CONFIG)
+     - "count" = hoeveel video's er in de map van die les zitten.
+       50 video's / 5 lessen = 10 per les hieronder — pas het getal aan
+       als een les een ander aantal video's heeft.
+     - Video's moeten 1.mov, 2.mov, 3.mov ... heten, in de map
+       LessonX die bij dat lesnummer hoort.
+  ===================================================================== */
+  const LESSONS = [
+    { id: 1, count: 13, cls: "l1" },
+    { id: 2, count: 4, cls: "l2" },
+    { id: 3, count: 5, cls: "l3" },
+    { id: 4, count: 4, cls: "l4" },
+    { id: 5, count: 2, cls: "l5" },
+  ];
+
+  const screenLessons = document.getElementById('screen-lessons');
+  const screenVideos  = document.getElementById('screen-videos');
+  const screenPlayer  = document.getElementById('screen-player');
+  const lessonGrid    = document.getElementById('lessonGrid');
+  const videoGrid     = document.getElementById('videoGrid');
+  const videoHeader    = document.getElementById('videoHeader');
+  const videoHeaderTitle = document.getElementById('videoHeaderTitle');
+  const player         = document.getElementById('player');
+
+  let currentLesson = null;
+
+  function buildLessonGrid() {
+    lessonGrid.innerHTML = '';
+    LESSONS.forEach(lesson => {
+      const btn = document.createElement('button');
+      btn.className = 'lesson-card ' + lesson.cls;
+      btn.innerHTML = `<span class="num">${lesson.id}</span><span class="label">Les ${lesson.id}</span>`;
+      btn.onclick = () => openLesson(lesson);
+      lessonGrid.appendChild(btn);
+    });
+  }
+
+  function openLesson(lesson) {
+    currentLesson = lesson;
+    videoHeaderTitle.textContent = `Les ${lesson.id}`;
+    videoHeader.style.background = `var(--${lesson.cls})`;
+    videoGrid.innerHTML = '';
+    for (let i = 1; i <= lesson.count; i++) {
+      const btn = document.createElement('button');
+      btn.className = 'video-btn';
+      btn.textContent = i;
+      btn.onclick = () => playVideo(lesson, i);
+      videoGrid.appendChild(btn);
+    }
+    show(screenVideos);
+  }
+
+  function playVideo(lesson, index) {
+    player.src = `Lesson${lesson.id}/${index}.mov`;
+    show(screenPlayer);
+    player.play().catch(() => {});
+  }
+
+  function stopAndShowVideos() {
+    player.pause();
+    player.removeAttribute('src');
+    player.load();
+    show(screenVideos);
+  }
+
+  function showLessons() {
+    show(screenLessons);
+  }
+
+  function show(target) {
+    [screenLessons, screenVideos, screenPlayer].forEach(s => s.classList.remove('active'));
+    target.classList.add('active');
+  }
+
+  buildLessonGrid();
+</script>
+</body>
+</html>
