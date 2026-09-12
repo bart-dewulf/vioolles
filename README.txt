@@ -1,5 +1,5 @@
-VIOOL LESSEN
-============
+VIOOL LESSEN (klassiek 2.1)
+===========================
 
 WAT ZIT ER IN DEZE MAP
 - index.html            -> de app zelf
