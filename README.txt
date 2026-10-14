@@ -1,6 +1,8 @@
 VIOOL LESSEN (klassiek 2.1)
 ===========================
 
+Link: https://bart-dewulf.github.io/vioolles/
+
 WAT ZIT ER IN DEZE MAP
 - index.html            -> de app zelf
 - Lesson1 ... Lesson5     -> zet hier de video's van elke les in
